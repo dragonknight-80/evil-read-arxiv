@@ -63,14 +63,14 @@
 
 ### 前置要求
 
-1. **Claude Code CLI** - 需要安装并配置 Claude Code
+1. **LLM 客户端（可选）** - 默认文档以 Claude Code 为例；也可以使用其他 LLM 工具
 2. **Python 3.8+** - 用于运行搜索和分析脚本
 3. **依赖库**：
    ```bash
    pip install -r requirements.txt
    ```
 
-### 安装步骤
+### 安装步骤（Claude Code）
 
 1. 将此仓库克隆或复制到你的 Claude Code skills 目录：
    ```bash
@@ -90,6 +90,36 @@
 2. 配置环境变量和路径（见下文"配置"部分）
 
 3. 重启 Claude Code CLI
+
+### 使用其他 LLM（替换 Claude Code）
+
+这个仓库的核心能力在 `scripts/*.py`，并不依赖某个特定模型。你可以直接在终端运行脚本，或在其他 LLM 客户端里“让它代你执行这些命令”。
+
+1. 克隆仓库并安装依赖：
+   ```bash
+   git clone <your-fork-or-this-repo>
+   cd evil-read-arxiv
+   pip install -r requirements.txt
+   ```
+2. 准备配置：
+   ```bash
+   cp config.example.yaml config.yaml
+   # 然后编辑 config.yaml
+   ```
+3. 直接运行对应脚本（无需 Claude skills 目录）：
+   ```bash
+   # 每日搜索（替代 "start my day"）
+   # 可选：追加 --target-date YYYY-MM-DD 指定基准日期
+   python start-my-day/scripts/search_arxiv.py --config config.yaml
+
+   # 生成笔记（替代 "paper-analyze <arxiv_id>" 的核心步骤）
+   python paper-analyze/scripts/generate_note.py --vault "$OBSIDIAN_VAULT_PATH" --paper-id 2401.00001 --title "Paper Title" --authors "Author" --domain "Foundation Models & LLM"
+
+   # 更新关系图
+   python paper-analyze/scripts/update_graph.py --vault "$OBSIDIAN_VAULT_PATH" --paper-id 2401.00001 --title "Paper Title" --domain "Foundation Models & LLM"
+   ```
+
+> 结论：**要替换 Claude Code，本质上只需改“入口”**（从 skills 指令改为脚本命令），脚本本身无需改模型提供方。
 
 ## 配置
 
