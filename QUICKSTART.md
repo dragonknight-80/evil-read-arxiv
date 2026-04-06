@@ -134,7 +134,8 @@ pip install -r requirements.txt
 cp config.example.yaml config.yaml
 
 # 3) 搜索最近论文（等价于 "start my day" 的核心动作）
-python start-my-day/scripts/search_arxiv.py --config config.yaml --days-back 1
+# 可选：追加 --target-date YYYY-MM-DD 指定基准日期
+python start-my-day/scripts/search_arxiv.py --config config.yaml
 
 # 4) 生成单篇论文笔记
 python paper-analyze/scripts/generate_note.py --vault "$OBSIDIAN_VAULT_PATH" --paper-id 2401.00001 --title "Paper Title" --authors "Author" --domain "Foundation Models & LLM"

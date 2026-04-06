@@ -109,7 +109,8 @@
 3. 直接运行对应脚本（无需 Claude skills 目录）：
    ```bash
    # 每日搜索（替代 "start my day"）
-   python start-my-day/scripts/search_arxiv.py --config config.yaml --days-back 1
+   # 可选：追加 --target-date YYYY-MM-DD 指定基准日期
+   python start-my-day/scripts/search_arxiv.py --config config.yaml
 
    # 生成笔记（替代 "paper-analyze <arxiv_id>" 的核心步骤）
    python paper-analyze/scripts/generate_note.py --vault "$OBSIDIAN_VAULT_PATH" --paper-id 2401.00001 --title "Paper Title" --authors "Author" --domain "Foundation Models & LLM"
