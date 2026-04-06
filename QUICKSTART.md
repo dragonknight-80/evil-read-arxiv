@@ -181,6 +181,22 @@ python paper-analyze/scripts/generate_note.py --vault "$OBSIDIAN_VAULT_PATH" --p
 
 **解决**：编辑 `start-my-day/scripts/link_keywords.py` 中的 `COMMON_WORDS` 集合，添加你不需要自动链接的词。
 
+### 问题：Semantic Scholar API 429（Rate limit）
+
+这是免费 API 的常见情况，可按下面处理：
+
+1. 申请并配置免费 API Key（推荐）  
+   - 申请地址：<https://www.semanticscholar.org/product/api#api-key>
+   - 在 `config.yaml` 添加：
+     ```yaml
+     semantic_scholar_api_key: "your-api-key-here"
+     ```
+2. 降低请求量（减少关键词、类别、`--max-results`）
+3. 临时跳过 Semantic Scholar 热门论文搜索（只跑 arXiv）：
+   ```bash
+   python start-my-day/scripts/search_arxiv.py --config config.yaml --skip-hot-papers
+   ```
+
 ## 需要帮助？
 
 - 查看 [README.md](README.md) 获取详细说明

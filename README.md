@@ -334,6 +334,24 @@ A:
 ### Q: 关键词自动链接不准确？
 A: 可以在 `start-my-day/scripts/link_keywords.py` 中修改 `COMMON_WORDS` 集合，添加你不需要自动链接的词
 
+### Q: Semantic Scholar 出现 429 限流，免费版怎么用？
+A: 可以，按下面顺序处理：
+1. 申请免费 API Key（官方免费注册）：<https://www.semanticscholar.org/product/api#api-key>
+2. 在 `config.yaml` 中配置：
+   ```yaml
+   semantic_scholar_api_key: "your-api-key-here"
+   ```
+3. 降低请求量：
+   - 缩小 `research_domains` 关键词范围
+   - 减少 `--categories` 数量
+   - 减少 `--max-results`（例如 80 或 50）
+4. 如果当天只想稳定出结果，可临时跳过 S2 热门论文：
+   ```bash
+   python start-my-day/scripts/search_arxiv.py --config config.yaml --skip-hot-papers
+   ```
+
+说明：本项目在遇到 429 时会自动重试并等待（默认等待 30 秒），但高频请求仍可能继续被限流。 
+
 ### Q: "Papers directory not found" 错误？
 A:
 1. 检查 `OBSIDIAN_VAULT_PATH` 环境变量是否正确设置
