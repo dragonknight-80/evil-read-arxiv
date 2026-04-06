@@ -63,14 +63,14 @@
 
 ### 前置要求
 
-1. **Claude Code CLI** - 需要安装并配置 Claude Code
+1. **LLM 客户端（可选）** - 默认文档以 Claude Code 为例；也可以使用其他 LLM 工具
 2. **Python 3.8+** - 用于运行搜索和分析脚本
 3. **依赖库**：
    ```bash
    pip install -r requirements.txt
    ```
 
-### 安装步骤
+### 安装步骤（Claude Code）
 
 1. 将此仓库克隆或复制到你的 Claude Code skills 目录：
    ```bash
@@ -90,6 +90,36 @@
 2. 配置环境变量和路径（见下文"配置"部分）
 
 3. 重启 Claude Code CLI
+
+### 使用其他 LLM（替换 Claude Code）
+
+这个仓库的核心能力在 `scripts/*.py`，并不依赖某个特定模型。你可以直接在终端运行脚本，或在其他 LLM 客户端里“让它代你执行这些命令”。
+
+1. 克隆仓库并安装依赖：
+   ```bash
+   git clone <your-fork-or-this-repo>
+   cd evil-read-arxiv
+   pip install -r requirements.txt
+   ```
+2. 准备配置：
+   ```bash
+   cp config.example.yaml config.yaml
+   # 然后编辑 config.yaml
+   ```
+3. 直接运行对应脚本（无需 Claude skills 目录）：
+   ```bash
+   # 每日搜索（替代 "start my day"）
+   # 可选：追加 --target-date YYYY-MM-DD 指定基准日期
+   python start-my-day/scripts/search_arxiv.py --config config.yaml
+
+   # 生成笔记（替代 "paper-analyze <arxiv_id>" 的核心步骤）
+   python paper-analyze/scripts/generate_note.py --vault "$OBSIDIAN_VAULT_PATH" --paper-id 2401.00001 --title "Paper Title" --authors "Author" --domain "Foundation Models & LLM"
+
+   # 更新关系图
+   python paper-analyze/scripts/update_graph.py --vault "$OBSIDIAN_VAULT_PATH" --paper-id 2401.00001 --title "Paper Title" --domain "Foundation Models & LLM"
+   ```
+
+> 结论：**要替换 Claude Code，本质上只需改“入口”**（从 skills 指令改为脚本命令），脚本本身无需改模型提供方。
 
 ## 配置
 
@@ -145,10 +175,10 @@ cp config.yaml "$OBSIDIAN_VAULT_PATH/99_System/Config/research_interests.yaml"
 如果不想设置环境变量，也可以在每次调用脚本时通过参数指定路径：
 
 ```bash
-python scripts/search_arxiv.py --config "/your/path/research_interests.yaml"
-python scripts/scan_existing_notes.py --vault "/your/obsidian/vault"
-python scripts/generate_note.py --vault "/your/obsidian/vault" --paper-id "2402.12345" --title "Paper Title" --authors "Author" --domain "大模型"
-python scripts/update_graph.py --vault "/your/obsidian/vault" --paper-id "2402.12345" --title "Paper Title" --domain "大模型"
+python start-my-day/scripts/search_arxiv.py --config "/your/path/research_interests.yaml"
+python start-my-day/scripts/scan_existing_notes.py --vault "/your/obsidian/vault"
+python paper-analyze/scripts/generate_note.py --vault "/your/obsidian/vault" --paper-id "2402.12345" --title "Paper Title" --authors "Author" --domain "大模型"
+python paper-analyze/scripts/update_graph.py --vault "/your/obsidian/vault" --paper-id "2402.12345" --title "Paper Title" --domain "大模型"
 ```
 
 ### 路径格式说明
@@ -304,6 +334,24 @@ A:
 ### Q: 关键词自动链接不准确？
 A: 可以在 `start-my-day/scripts/link_keywords.py` 中修改 `COMMON_WORDS` 集合，添加你不需要自动链接的词
 
+### Q: Semantic Scholar 出现 429 限流，免费版怎么用？
+A: 可以，按下面顺序处理：
+1. 申请免费 API Key（官方免费注册）：<https://www.semanticscholar.org/product/api#api-key>
+2. 在 `config.yaml` 中配置：
+   ```yaml
+   semantic_scholar_api_key: "your-api-key-here"
+   ```
+3. 降低请求量：
+   - 缩小 `research_domains` 关键词范围
+   - 减少 `--categories` 数量
+   - 减少 `--max-results`（例如 80 或 50）
+4. 如果当天只想稳定出结果，可临时跳过 S2 热门论文：
+   ```bash
+   python start-my-day/scripts/search_arxiv.py --config config.yaml --skip-hot-papers
+   ```
+
+说明：本项目在遇到 429 时会自动重试并等待（默认等待 30 秒），但高频请求仍可能继续被限流。 
+
 ### Q: "Papers directory not found" 错误？
 A:
 1. 检查 `OBSIDIAN_VAULT_PATH` 环境变量是否正确设置
@@ -319,7 +367,7 @@ A: 设置 `OBSIDIAN_VAULT_PATH` 环境变量，或在调用脚本时通过 `--va
 在调用 `search_arxiv.py` 时通过 `--categories` 参数指定：
 
 ```bash
-python scripts/search_arxiv.py --categories "cs.AI,cs.LG,cs.CL,cs.CV"
+python start-my-day/scripts/search_arxiv.py --categories "cs.AI,cs.LG,cs.CL,cs.CV"
 ```
 
 ### 修改每天推荐的论文数量
@@ -327,7 +375,7 @@ python scripts/search_arxiv.py --categories "cs.AI,cs.LG,cs.CL,cs.CV"
 在调用 `search_arxiv.py` 时通过 `--top-n` 参数指定：
 
 ```bash
-python scripts/search_arxiv.py --top-n 15
+python start-my-day/scripts/search_arxiv.py --top-n 15
 ```
 
 ### 修改评分权重

@@ -134,10 +134,10 @@ cp config.yaml "$OBSIDIAN_VAULT_PATH/99_System/Config/research_interests.yaml"
 If you don't want to set environment variables, you can specify paths via parameters each time:
 
 ```bash
-python scripts/search_arxiv.py --config "/your/path/research_interests.yaml"
-python scripts/scan_existing_notes.py --vault "/your/obsidian/vault"
-python scripts/generate_note.py --vault "/your/obsidian/vault" --paper-id "2402.12345" --title "Paper Title" --authors "Author" --domain "LLM" --language "en"
-python scripts/update_graph.py --vault "/your/obsidian/vault" --paper-id "2402.12345" --title "Paper Title" --domain "LLM" --language "en"
+python start-my-day/scripts/search_arxiv.py --config "/your/path/research_interests.yaml"
+python start-my-day/scripts/scan_existing_notes.py --vault "/your/obsidian/vault"
+python paper-analyze/scripts/generate_note.py --vault "/your/obsidian/vault" --paper-id "2402.12345" --title "Paper Title" --authors "Author" --domain "LLM" --language "en"
+python paper-analyze/scripts/update_graph.py --vault "/your/obsidian/vault" --paper-id "2402.12345" --title "Paper Title" --domain "LLM" --language "en"
 ```
 
 ### Path Format Notes
@@ -304,7 +304,7 @@ A: Set `OBSIDIAN_VAULT_PATH` environment variable, or specify path via `--vault`
 Specify via `--categories` parameter when calling `search_arxiv.py`:
 
 ```bash
-python scripts/search_arxiv.py --categories "cs.AI,cs.LG,cs.CL,cs.CV"
+python start-my-day/scripts/search_arxiv.py --categories "cs.AI,cs.LG,cs.CL,cs.CV"
 ```
 
 ### Modify Daily Recommendation Count
@@ -312,7 +312,7 @@ python scripts/search_arxiv.py --categories "cs.AI,cs.LG,cs.CL,cs.CV"
 Specify via `--top-n` parameter when calling `search_arxiv.py`:
 
 ```bash
-python scripts/search_arxiv.py --top-n 15
+python start-my-day/scripts/search_arxiv.py --top-n 15
 ```
 
 ### Modify Scoring Weights

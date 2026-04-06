@@ -100,9 +100,22 @@ WEIGHTS_HOT = {
 # Semantic Scholar 速率限制等待时间（秒）
 S2_RATE_LIMIT_WAIT = 30
 S2_CATEGORY_REQUEST_INTERVAL = 3
+# 免费层常见限速约 1 req/sec，增加保护余量
+S2_MIN_REQUEST_INTERVAL = 1.1
+S2_LAST_REQUEST_TS = 0.0
 
 # Semantic Scholar API Key（可选，从配置文件读取）
 S2_API_KEY = None
+
+
+def enforce_s2_rate_limit() -> None:
+    """在每次请求 S2 前强制限速，避免超过免费层速率。"""
+    global S2_LAST_REQUEST_TS
+    now = time.time()
+    elapsed = now - S2_LAST_REQUEST_TS
+    if elapsed < S2_MIN_REQUEST_INTERVAL:
+        time.sleep(S2_MIN_REQUEST_INTERVAL - elapsed)
+    S2_LAST_REQUEST_TS = time.time()
 
 
 def load_research_config(config_path: str) -> Dict:
@@ -273,6 +286,7 @@ def search_semantic_scholar_hot_papers(
     
     for attempt in range(max_retries):
         try:
+            enforce_s2_rate_limit()
             if HAS_REQUESTS:
                 response = requests.get(
                     SEMANTIC_SCHOLAR_API_URL,

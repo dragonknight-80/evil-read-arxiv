@@ -74,6 +74,8 @@ Copy-Item -Recurse evil-read-arxiv\extract-paper-images $env:USERPROFILE\.claude
 Copy-Item -Recurse evil-read-arxiv\paper-search $env:USERPROFILE\.claude\skills\
 ```
 
+> 如果你不使用 Claude Code，可跳过本节，直接在终端运行各脚本（见下文“附：不用 Claude Code 的最小流程”）。
+
 ## 第三步：创建 Obsidian 目录结构
 
 在你的 Obsidian Vault 中创建以下目录：
@@ -118,6 +120,29 @@ start my day
 paper-analyze 2602.12345
 ```
 
+---
+
+## 附：不用 Claude Code 的最小流程（适配任意 LLM 工具）
+
+如果你想替换成其他 LLM（如只用 API、或其他 AI IDE），可直接用命令行调用脚本：
+
+```bash
+# 1) 安装依赖
+pip install -r requirements.txt
+
+# 2) 准备配置
+cp config.example.yaml config.yaml
+
+# 3) 搜索最近论文（等价于 "start my day" 的核心动作）
+# 可选：追加 --target-date YYYY-MM-DD 指定基准日期
+python start-my-day/scripts/search_arxiv.py --config config.yaml
+
+# 4) 生成单篇论文笔记
+python paper-analyze/scripts/generate_note.py --vault "$OBSIDIAN_VAULT_PATH" --paper-id 2401.00001 --title "Paper Title" --authors "Author" --domain "Foundation Models & LLM"
+```
+
+要点：这个项目的核心是 Python 脚本，不是模型绑定；替换 LLM 时通常只需要替换“谁来帮你执行命令/组织流程”。
+
 ## 常用 arXiv 分类
 
 | 分类代码 | 名称 | 说明 |
@@ -155,6 +180,22 @@ paper-analyze 2602.12345
 ### 问题：关键词自动链接不准确
 
 **解决**：编辑 `start-my-day/scripts/link_keywords.py` 中的 `COMMON_WORDS` 集合，添加你不需要自动链接的词。
+
+### 问题：Semantic Scholar API 429（Rate limit）
+
+这是免费 API 的常见情况，可按下面处理：
+
+1. 申请并配置免费 API Key（推荐）  
+   - 申请地址：<https://www.semanticscholar.org/product/api#api-key>
+   - 在 `config.yaml` 添加：
+     ```yaml
+     semantic_scholar_api_key: "your-api-key-here"
+     ```
+2. 降低请求量（减少关键词、类别、`--max-results`）
+3. 临时跳过 Semantic Scholar 热门论文搜索（只跑 arXiv）：
+   ```bash
+   python start-my-day/scripts/search_arxiv.py --config config.yaml --skip-hot-papers
+   ```
 
 ## 需要帮助？
 
